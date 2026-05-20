@@ -41,7 +41,7 @@ spec:
         } 
       } 
     } 
-
+// stage pour build image et la push sur le registry local de Docker Desktop Windows
     stage('Build image') { 
       steps { 
         container('docker') { 
