@@ -45,7 +45,7 @@ spec:
     stage('Build image') { 
       steps { 
         container('docker') { 
-          // Plus besoin de chmod ici, la connexion passe par le réseau interne :::::
+          // Plus besoin de chmod ici, la connexion passe 
           sh "docker build -t localhost:4000/pythontest:latest ." 
           sh "docker push localhost:4000/pythontest:latest" 
         } 
