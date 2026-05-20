@@ -31,7 +31,7 @@ spec:
   triggers { 
       pollSCM('*/10 * * * *') 
   } 
-
+// stage jenkinsfile pour tester l'app et construire l'image
   stages { 
     stage('Test python') { 
       steps { 
