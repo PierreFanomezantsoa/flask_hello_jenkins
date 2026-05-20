@@ -22,7 +22,8 @@ spec:
     stage('Test python') { 
       steps { 
         container('python') { 
-          sh "pip install -r requirements.txt" 
+          // Ajout du timeout à 120s pour éviter le crash sur les grosses dépendances
+          sh "pip install --default-timeout=120 -r requirements.txt" 
           sh "python test.py" 
         } 
       } 
