@@ -48,9 +48,11 @@ spec:
       } 
     } 
 
-    stage('Build image') { 
+   stage('Build image') { 
       steps { 
         container('docker') { 
+          // Force les permissions pour s'assurer que l'outil docker puisse lui parler
+          sh "chmod 777 /var/run/docker.sock || chmod 666 /var/run/docker.sock || true"
           sh "docker build -t localhost:4000/pythontest:latest ." 
           sh "docker push localhost:4000/pythontest:latest" 
         } 
