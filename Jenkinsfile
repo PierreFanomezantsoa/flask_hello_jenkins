@@ -18,11 +18,15 @@ spec:
 """ 
     } 
   } 
+
+  triggers { 
+      pollSCM('* * * * *') 
+  } 
+
   stages { 
     stage('Test python') { 
       steps { 
         container('python') { 
-          // Ajout du timeout à 120s pour éviter le crash sur les grosses dépendances
           sh "pip install --default-timeout=120 -r requirements.txt" 
           sh "python test.py" 
         } 
