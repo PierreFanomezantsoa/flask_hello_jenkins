@@ -20,16 +20,10 @@ spec:
       command: 
         - cat 
       tty: true 
-      securityContext:
-        privileged: true
-      volumeMounts: 
-        - mountPath: /var/run/docker.sock 
-          name: docker-sock 
-  # CORRECTION: volumes doit être aligné avec containers (sous spec)
-  volumes: 
-    - name: docker-sock
-      hostPath: 
-        path: /var/run/docker.sock 
+      # On utilise l'adresse réseau de l'hôte Docker Desktop sous Windows
+      env:
+        - name: DOCKER_HOST
+          value: tcp://host.docker.internal:2375
 """ 
     } 
   } 
@@ -51,7 +45,7 @@ spec:
     stage('Build image') { 
       steps { 
         container('docker') { 
-          sh "chmod 777 /var/run/docker.sock || chmod 666 /var/run/docker.sock || true"
+          // Plus besoin de chmod ou de volume-mount !
           sh "docker build -t localhost:4000/pythontest:latest ." 
           sh "docker push localhost:4000/pythontest:latest" 
         } 
