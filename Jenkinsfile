@@ -20,7 +20,7 @@ spec:
       command: 
         - cat 
       tty: true 
-      # On utilise l'adresse réseau de l'hôte Docker Desktop sous Windows
+      # On pointe directement vers le proxy TCP de ton Docker Desktop Windows
       env:
         - name: DOCKER_HOST
           value: tcp://host.docker.internal:2375
@@ -45,7 +45,7 @@ spec:
     stage('Build image') { 
       steps { 
         container('docker') { 
-          // Plus besoin de chmod ou de volume-mount !
+          // Plus besoin de chmod ici, la connexion passe par le réseau interne
           sh "docker build -t localhost:4000/pythontest:latest ." 
           sh "docker push localhost:4000/pythontest:latest" 
         } 
