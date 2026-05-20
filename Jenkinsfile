@@ -32,7 +32,8 @@ spec:
   } 
 
   triggers { 
-      pollSCM('* * * * *') 
+      // Vérification toutes les 10 minutes pour soulager la RAM de ton PC
+      pollSCM('*/10 * * * *') 
   } 
 
   stages { 
