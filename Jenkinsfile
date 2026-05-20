@@ -20,6 +20,9 @@ spec:
       command: 
         - cat 
       tty: true 
+      # Ajout des privilèges pour accéder au docker.sock de l'hôte
+      securityContext:
+        privileged: true
       volumeMounts: 
         - mountPath: /var/run/docker.sock 
           name: docker-sock 
@@ -32,7 +35,6 @@ spec:
   } 
 
   triggers { 
-      // Vérification toutes les 10 minutes pour soulager la RAM de ton PC
       pollSCM('*/10 * * * *') 
   } 
 
