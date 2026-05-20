@@ -25,6 +25,7 @@ spec:
       volumeMounts: 
         - mountPath: /var/run/docker.sock 
           name: docker-sock 
+  # CORRECTION: volumes doit être aligné avec containers (sous spec)
   volumes: 
     - name: docker-sock
       hostPath: 
@@ -50,10 +51,7 @@ spec:
     stage('Build image') { 
       steps { 
         container('docker') { 
-          // Ajustement des privilèges du fichier socket au runtime
           sh "chmod 777 /var/run/docker.sock || chmod 666 /var/run/docker.sock || true"
-          
-          // Build et envoi de l'image sur ton registry local
           sh "docker build -t localhost:4000/pythontest:latest ." 
           sh "docker push localhost:4000/pythontest:latest" 
         } 
