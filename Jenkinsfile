@@ -20,7 +20,6 @@ spec:
       command: 
         - cat 
       tty: true 
-      # Ajout des privilèges pour accéder au docker.sock de l'hôte
       securityContext:
         privileged: true
       volumeMounts: 
@@ -48,11 +47,13 @@ spec:
       } 
     } 
 
-   stage('Build image') { 
+    stage('Build image') { 
       steps { 
         container('docker') { 
-          // Force les permissions pour s'assurer que l'outil docker puisse lui parler
+          // Ajustement des privilèges du fichier socket au runtime
           sh "chmod 777 /var/run/docker.sock || chmod 666 /var/run/docker.sock || true"
+          
+          // Build et envoi de l'image sur ton registry local
           sh "docker build -t localhost:4000/pythontest:latest ." 
           sh "docker push localhost:4000/pythontest:latest" 
         } 
