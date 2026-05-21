@@ -51,11 +51,12 @@ spec:
       pollSCM('*/10 * * * *') 
   } 
 
-  stages { 
+ stages { 
     stage('Test python') { 
       steps { 
         container('python') { 
-          sh "pip install --no-cache-dir --default-timeout=120 -r requirements.txt" 
+          // On augmente la tolérance réseau et on contourne le cache défectueux
+          sh "pip install --no-cache-dir --default-timeout=200 -r requirements.txt --add-host pypi.org:23.235.47.223" 
           sh "python test.py" 
         } 
       } 
@@ -69,5 +70,5 @@ spec:
         } 
       } 
     } 
-  } 
+  }
 }
