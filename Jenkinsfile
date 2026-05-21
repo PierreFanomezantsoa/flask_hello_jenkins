@@ -55,8 +55,11 @@ spec:
     stage('Test python') { 
       steps { 
         container('python') { 
-          // On augmente la tolérance réseau et on contourne le cache défectueux
-          sh "pip install --no-cache-dir --default-timeout=200 -r requirements.txt --add-host pypi.org:23.235.47.223" 
+          // 1. On met à jour pip pour corriger ses bugs de téléchargement lent
+          sh "pip install --upgrade pip"
+          
+          // 2. On installe les paquets classiques sans vérifier les empreintes
+          sh "pip install --no-cache-dir --default-timeout=300 -r requirements.txt" 
           sh "python test.py" 
         } 
       } 
