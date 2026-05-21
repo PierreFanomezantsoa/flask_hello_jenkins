@@ -59,7 +59,7 @@ spec:
         } 
       } 
     } 
-
+    // ici pour construire et pousser l'image dans le registry local de minikube, tu peux aussi utiliser un registry distant comme dockerhub ou github packages, mais il faudra adapter les commandes docker build et push en conséquence.
     stage('Build image') { 
       steps { 
         container('docker') { 
