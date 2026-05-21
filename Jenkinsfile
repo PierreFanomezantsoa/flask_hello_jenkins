@@ -24,7 +24,7 @@ spec:
           cpu: "200m"
           memory: "256Mi"
     - name: docker 
-      image: docker:git # Version allégée avec git inclus au cas où
+      image: docker:git 
       command: 
         - cat 
       tty: true 
@@ -50,9 +50,10 @@ spec:
     stage('Test python') { 
       steps { 
         container('python') { 
-          # Les images alpine n'ont pas toujours tous les outils de build. 
-          # Si pip install lxml échoue, ajoute cette ligne pour installer les dépendances système :
-          # sh "apk add --no-cache gcc musl-dev libxml2-dev libxslt-dev"
+          // Les images alpine n'ont pas toujours tous les outils de build. 
+          // Si pip install lxml echoue, enleve le '//' de la ligne suivante :
+          // sh "apk add --no-cache gcc musl-dev libxml2-dev libxslt-dev"
+          
           sh "pip install --no-cache-dir --default-timeout=120 -r requirements.txt" 
           sh "python test.py" 
         } 
