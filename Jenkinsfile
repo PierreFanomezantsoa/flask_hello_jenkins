@@ -27,9 +27,9 @@ spec:
       command: 
         - cat 
       tty: true 
-      env:
-        - name: DOCKER_HOST
-          value: tcp://host.docker.internal:2375
+      volumeMounts:
+        - mountPath: /var/run/docker.sock 
+          name: docker-sock 
       resources:
         requests:
           cpu: "50m"
@@ -37,6 +37,10 @@ spec:
         limits:
           cpu: "200m"
           memory: "128Mi"
+  volumes:
+    - name: docker-sock
+      hostPath: 
+        path: /var/run/docker.sock 
 """ 
     } 
   } 
@@ -62,6 +66,7 @@ spec:
     stage('Build image') { 
       steps { 
         container('docker') { 
+          // Utilise désormais le socket partagé pour build l'image via l'hôte
           sh "docker build -t localhost:4000/pythontest:latest ." 
           sh "docker push localhost:4000/pythontest:latest" 
         } 
