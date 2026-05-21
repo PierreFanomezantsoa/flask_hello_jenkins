@@ -11,17 +11,17 @@ metadata:
 spec: 
   containers: 
     - name: python 
-      image: python:3.10-alpine 
+      image: python:3.10-slim
       command: 
         - cat 
       tty: true 
       resources:
         requests:
           cpu: "50m"
-          memory: "64Mi"
+          memory: "128Mi"
         limits:
-          cpu: "200m"
-          memory: "256Mi"
+          cpu: "300m"
+          memory: "512Mi"
     - name: docker 
       image: docker:git 
       command: 
@@ -53,10 +53,7 @@ spec:
     stage('Test python') { 
       steps { 
         container('python') { 
-          // Installation des dépendances système requises pour compiler lxml sous Alpine
-          sh "apk add --no-cache gcc musl-dev libxml2-dev libxslt-dev"
-          
-          // Installation des packages Python sans cache pour économiser la RAM
+          // Plus besoin de apk add ! L'image slim télécharge directement le paquet pré-compilé
           sh "pip install --no-cache-dir --default-timeout=120 -r requirements.txt" 
           sh "python test.py" 
         } 
@@ -66,7 +63,6 @@ spec:
     stage('Build image') { 
       steps { 
         container('docker') { 
-          // Utilise désormais le socket partagé pour build l'image via l'hôte
           sh "docker build -t localhost:4000/pythontest:latest ." 
           sh "docker push localhost:4000/pythontest:latest" 
         } 
