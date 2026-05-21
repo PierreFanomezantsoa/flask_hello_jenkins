@@ -27,6 +27,8 @@ spec:
       command: 
         - cat 
       tty: true 
+      securityContext:         # AJOUT : Donne l'autorisation d'accéder à docker.sock
+        runAsUser: 0
       volumeMounts:
         - mountPath: /var/run/docker.sock 
           name: docker-sock 
@@ -53,7 +55,6 @@ spec:
     stage('Test python') { 
       steps { 
         container('python') { 
-          // Plus besoin de apk add ! L'image slim télécharge directement le paquet pré-compilé
           sh "pip install --no-cache-dir --default-timeout=120 -r requirements.txt" 
           sh "python test.py" 
         } 
