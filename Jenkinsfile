@@ -15,7 +15,6 @@ spec:
       command: 
         - cat 
       tty: true 
-      # OPTIMISATION RAM/CPU : Empêche le conteneur de saturer ton i5
       resources:
         requests:
           cpu: "50m"
@@ -45,21 +44,21 @@ spec:
   triggers { 
       pollSCM('*/10 * * * *') 
   } 
- // test pour vérifier que le pipeline fonctionne, tu peux aussi ajouter une étape de test avant la construction de l'image, par exemple en exécutant un script python qui vérifie que tout est en ordre.
+
   stages { 
     stage('Test python') { 
       steps { 
         container('python') { 
-          // Les images alpine n'ont pas toujours tous les outils de build. 
-          // Si pip install lxml echoue, enleve le '//' de la ligne suivante :
-          // sh "apk add --no-cache gcc musl-dev libxml2-dev libxslt-dev"
+          // Installation des dépendances système requises pour compiler lxml sous Alpine
+          sh "apk add --no-cache gcc musl-dev libxml2-dev libxslt-dev"
           
+          // Installation des packages Python sans cache pour économiser la RAM
           sh "pip install --no-cache-dir --default-timeout=120 -r requirements.txt" 
           sh "python test.py" 
         } 
       } 
     } 
-    // ici pour construire et pousser l'image dans le registry local de minikube, tu peux aussi utiliser un registry distant comme dockerhub ou github packages, mais il faudra adapter les commandes docker build et push en conséquence.
+
     stage('Build image') { 
       steps { 
         container('docker') { 
