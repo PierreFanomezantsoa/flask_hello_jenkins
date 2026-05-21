@@ -27,11 +27,9 @@ spec:
       command: 
         - cat 
       tty: true 
-      securityContext:         # AJOUT : Donne l'autorisation d'accéder à docker.sock
-        runAsUser: 0
-      volumeMounts:
-        - mountPath: /var/run/docker.sock 
-          name: docker-sock 
+      env:                     # On repasse par le réseau interne de Docker Desktop
+        - name: DOCKER_HOST
+          value: tcp://host.docker.internal:2375
       resources:
         requests:
           cpu: "50m"
@@ -39,10 +37,6 @@ spec:
         limits:
           cpu: "200m"
           memory: "128Mi"
-  volumes:
-    - name: docker-sock
-      hostPath: 
-        path: /var/run/docker.sock 
 """ 
     } 
   } 
@@ -51,14 +45,11 @@ spec:
       pollSCM('*/10 * * * *') 
   } 
 
- stages { 
+  stages { 
     stage('Test python') { 
       steps { 
         container('python') { 
-          // 1. On met à jour pip pour corriger ses bugs de téléchargement lent
           sh "pip install --upgrade pip"
-          
-          // 2. On installe les paquets classiques sans vérifier les empreintes
           sh "pip install --no-cache-dir --default-timeout=300 -r requirements.txt" 
           sh "python test.py" 
         } 
@@ -68,10 +59,11 @@ spec:
     stage('Build image') { 
       steps { 
         container('docker') { 
+          // Connexion directe via TCP à ton moteur Docker Windows
           sh "docker build -t localhost:4000/pythontest:latest ." 
           sh "docker push localhost:4000/pythontest:latest" 
         } 
       } 
     } 
-  }
+  } 
 }
