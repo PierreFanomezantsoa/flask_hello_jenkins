@@ -11,19 +11,33 @@ metadata:
 spec: 
   containers: 
     - name: python 
-      image: python:3.10 
+      image: python:3.10-alpine 
       command: 
         - cat 
       tty: true 
+      # OPTIMISATION RAM/CPU : Empêche le conteneur de saturer ton i5
+      resources:
+        requests:
+          cpu: "50m"
+          memory: "64Mi"
+        limits:
+          cpu: "200m"
+          memory: "256Mi"
     - name: docker 
-      image: docker 
+      image: docker:git # Version allégée avec git inclus au cas où
       command: 
         - cat 
       tty: true 
-      # On pointe directement vers le proxy TCP de ton Docker Desktop Windows
       env:
         - name: DOCKER_HOST
           value: tcp://host.docker.internal:2375
+      resources:
+        requests:
+          cpu: "50m"
+          memory: "64Mi"
+        limits:
+          cpu: "200m"
+          memory: "128Mi"
 """ 
     } 
   } 
@@ -31,21 +45,23 @@ spec:
   triggers { 
       pollSCM('*/10 * * * *') 
   } 
-// stage jenkinsfile pour tester l'app et construire l'image
+
   stages { 
     stage('Test python') { 
       steps { 
         container('python') { 
-          sh "pip install --default-timeout=120 -r requirements.txt" 
+          # Les images alpine n'ont pas toujours tous les outils de build. 
+          # Si pip install lxml échoue, ajoute cette ligne pour installer les dépendances système :
+          # sh "apk add --no-cache gcc musl-dev libxml2-dev libxslt-dev"
+          sh "pip install --no-cache-dir --default-timeout=120 -r requirements.txt" 
           sh "python test.py" 
         } 
       } 
     } 
-// stage pour build image et la push sur le registry local de Docker Desktop Windows
+
     stage('Build image') { 
       steps { 
         container('docker') { 
-          // Plus besoin de chmod ici, la connexion passe 
           sh "docker build -t localhost:4000/pythontest:latest ." 
           sh "docker push localhost:4000/pythontest:latest" 
         } 
