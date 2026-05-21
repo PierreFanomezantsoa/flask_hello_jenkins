@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.10-slim
 
 # Ne pas lancer les app en root dans docker 
 RUN useradd flask 
