@@ -45,7 +45,7 @@ spec:
   triggers { 
       pollSCM('*/10 * * * *') 
   } 
-
+ // test pour vérifier que le pipeline fonctionne, tu peux aussi ajouter une étape de test avant la construction de l'image, par exemple en exécutant un script python qui vérifie que tout est en ordre.
   stages { 
     stage('Test python') { 
       steps { 
