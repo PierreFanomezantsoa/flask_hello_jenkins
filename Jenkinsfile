@@ -27,7 +27,7 @@ spec:
       command: 
         - cat 
       tty: true 
-      env:                     # On repasse par le réseau interne de Docker Desktop
+      env: 
         - name: DOCKER_HOST
           value: tcp://host.docker.internal:2375
       resources:
@@ -37,6 +37,18 @@ spec:
         limits:
           cpu: "200m"
           memory: "128Mi"
+    - name: kubectl 
+      image: bitnami/kubectl:latest
+      command: 
+        - cat 
+      tty: true 
+      resources:
+        requests:
+          cpu: "50m"
+          memory: "32Mi"
+        limits:
+          cpu: "100m"
+          memory: "64Mi"
 """ 
     } 
   } 
@@ -59,9 +71,17 @@ spec:
     stage('Build image') { 
       steps { 
         container('docker') { 
-          // Connexion directe via TCP à ton moteur Docker Windows
           sh "docker build -t localhost:4000/pythontest:latest ." 
           sh "docker push localhost:4000/pythontest:latest" 
+        } 
+      } 
+    } 
+
+    stage('Deploy') { 
+      steps { 
+        container('kubectl') { 
+          sh "kubectl apply -f ./kubernetes/deployment.yaml" 
+          sh "kubectl apply -f ./kubernetes/service.yaml" 
         } 
       } 
     } 
