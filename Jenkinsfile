@@ -38,7 +38,7 @@ spec:
           cpu: "200m"
           memory: "128Mi"
     - name: kubectl 
-      image: bitnami/kubectl:latest
+      image: alpine/k8s:1.29.2   # Image officielle ultra-compatible avec shell inclus
       command: 
         - cat 
       tty: true 
