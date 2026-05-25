@@ -76,7 +76,7 @@ spec:
         } 
       } 
     } 
-
+// mise en place de la partie déploiement dans le cluster kubernetes
     stage('Deploy') { 
       steps { 
         container('kubectl') { 
