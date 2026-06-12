@@ -10,3 +10,7 @@ def hello_user(username):
     return 'Bonjours tous le mondes %s!\n' % username 
 if __name__ == '__main__': 
    app.run(host='0.0.0.0') # open for everyone 
+
+@app.route('/feature/<name>')
+def feature_route(name):
+    return f"Feature for {name}\n" # Ou tout autre retour textuel basique

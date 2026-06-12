@@ -38,7 +38,7 @@ spec:
           cpu: "200m"
           memory: "128Mi"
     - name: kubectl 
-      image: alpine/k8s:1.29.2   # Image officielle ultra-compatible avec shell inclus
+      image: alpine/k8s:1.29.2
       command: 
         - cat 
       tty: true 
@@ -69,6 +69,9 @@ spec:
     } 
 
     stage('Build image') { 
+      when {
+        branch 'master'
+      }
       steps { 
         container('docker') { 
           sh "docker build -t localhost:4000/pythontest:latest ." 
@@ -76,8 +79,11 @@ spec:
         } 
       } 
     } 
-// mise en place de la partie déploiement dans le cluster kubernetes
+
     stage('Deploy') { 
+      when {
+        branch 'master'
+      }
       steps { 
         container('kubectl') { 
           sh "kubectl apply -f ./kubernetes/deployment.yaml" 
